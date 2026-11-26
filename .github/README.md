@@ -1,6 +1,6 @@
 # GitHub Actions CI/CD
 
-This directory contains GitHub Actions workflows for automated building and releasing of the Scale Scaler CLAP plugin.
+This directory contains GitHub Actions workflows for automated building and releasing of the MIDI Note Translator CLAP plugin.
 
 ## Workflows
 
@@ -31,9 +31,9 @@ The workflow runs on:
 #### Artifacts
 
 Each build produces:
-- `scale-scaler-linux-x64.zip` - Linux CLAP plugin
-- `scale-scaler-macos-universal.zip` - macOS CLAP plugin bundle
-- `scale-scaler-windows-x64.zip` - Windows CLAP plugin
+- `MidiNoteTranslator-linux-x64.zip` - Linux CLAP plugin
+- `MidiNoteTranslator-macos-universal.zip` - macOS CLAP plugin bundle
+- `MidiNoteTranslator-windows-x64.zip` - Windows CLAP plugin
 
 ## Creating a Release
 

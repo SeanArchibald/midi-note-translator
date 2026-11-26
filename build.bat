@@ -3,7 +3,7 @@ setlocal EnableDelayedExpansion
 
 :: Build script for Windows
 
-echo Building Scale Scaler CLAP Plugin for Windows...
+echo Building MIDI Note Translator CLAP Plugin for Windows...
 echo ================================================
 
 set "SCRIPT_DIR=%~dp0"
@@ -56,10 +56,10 @@ echo ================================================
 echo Build complete!
 echo.
 echo Plugin location:
-echo   %INSTALL_PREFIX%\scale-scaler.clap
+echo   %INSTALL_PREFIX%\MidiNoteTranslator.clap
 echo.
 echo To install system-wide, copy to:
-echo   %%LOCALAPPDATA%%\Programs\Common\CLAP\
+echo   %%LOCALAPPDATA%%\Programs\CLAP\
 echo.
 echo Or run: cmake --install %BUILD_DIR%
 echo ================================================

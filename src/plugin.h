@@ -9,7 +9,7 @@
 #include <cmath>
 #include <unordered_map>
 
-namespace scale_scaler {
+namespace midi_note_translator {
 
 enum class ParamId : uint32_t {
     InputNoteCount = 0,
@@ -99,4 +99,4 @@ private:
     std::unordered_map<ActiveNoteKey, ActiveNoteInfo, ActiveNoteKeyHash> m_activeNotes;
 };
 
-} // namespace scale_scaler
+} // namespace midi_note_translator

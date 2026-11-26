@@ -3,15 +3,15 @@
 #include <string>
 #include <cstdio>
 
-namespace scale_scaler {
+namespace midi_note_translator {
 
-static const char* const PLUGIN_NAME = "Scale Scaler";
+static const char* const PLUGIN_NAME = "MIDI Note Translator";
 static const char* const PLUGIN_VENDOR = "Sevish";
 static const char* const PLUGIN_URL = "";
 static const char* const PLUGIN_MANUAL_URL = "";
 static const char* const PLUGIN_SUPPORT_URL = "";
 static const char* const PLUGIN_VERSION = "1.0.0";
-static const char* const PLUGIN_DESCRIPTION = "Scales MIDI note numbers between different sized tunings";
+static const char* const PLUGIN_DESCRIPTION = "Translates MIDI note numbers between equal divisions";
 
 // Plugin features - note effect that handles MIDI
 static const char* s_features[] = {
@@ -23,7 +23,7 @@ static const char* s_features[] = {
 // Plugin descriptor - properly initialized with features at compile time
 static const clap_plugin_descriptor s_descriptor = {
     CLAP_VERSION,
-    "com.sevish.scale-scaler",
+    "com.sevish.midi-note-translator",
     PLUGIN_NAME,
     PLUGIN_VENDOR,
     PLUGIN_URL,
@@ -439,4 +439,4 @@ clap_process_status Plugin::process(const clap_process* process) noexcept {
     return CLAP_PROCESS_CONTINUE;
 }
 
-} // namespace scale_scaler
+} // namespace midi_note_translator

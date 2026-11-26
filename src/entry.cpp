@@ -2,7 +2,7 @@
 #include <clap/clap.h>
 #include <cstring>
 
-namespace scale_scaler {
+namespace midi_note_translator {
 
 // Get the count of plugin descriptors
 static uint32_t getPluginCount(const clap_plugin_factory* factory) {
@@ -62,12 +62,12 @@ static const void* entryGetFactory(const char* factory_id) {
     return nullptr;
 }
 
-} // namespace scale_scaler
+} // namespace midi_note_translator
 
 // CLAP entry point - this is the symbol that hosts look for
 CLAP_EXPORT const clap_plugin_entry_t clap_entry = {
     CLAP_VERSION_INIT,
-    scale_scaler::entryInit,
-    scale_scaler::entryDeinit,
-    scale_scaler::entryGetFactory,
+    midi_note_translator::entryInit,
+    midi_note_translator::entryDeinit,
+    midi_note_translator::entryGetFactory,
 };

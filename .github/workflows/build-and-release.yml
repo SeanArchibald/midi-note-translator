@@ -14,7 +14,7 @@ on:
         default: ''
 
 env:
-  PLUGIN_NAME: ScaleScaler
+  PLUGIN_NAME: MidiNoteTranslator
 
 jobs:
   # ============================================================================

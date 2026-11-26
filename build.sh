@@ -22,7 +22,7 @@ else
     exit 1
 fi
 
-echo "Building Scale Scaler CLAP Plugin for ${PLATFORM}..."
+echo "Building MIDI Note Translator CLAP Plugin for ${PLATFORM}..."
 echo "================================================"
 
 # Clean previous build
@@ -51,12 +51,12 @@ echo "Build complete!"
 echo ""
 echo "Plugin location:"
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    echo "  ${INSTALL_PREFIX}/scale-scaler.clap"
+    echo "  ${INSTALL_PREFIX}/MidiNoteTranslator.clap"
     echo ""
     echo "To install system-wide, copy to:"
     echo "  ~/Library/Audio/Plug-Ins/CLAP/"
 else
-    echo "  ${INSTALL_PREFIX}/scale-scaler.clap"
+    echo "  ${INSTALL_PREFIX}/MidiNoteTranslator.clap"
     echo ""
     echo "To install system-wide, copy to:"
     echo "  ~/.clap/"
