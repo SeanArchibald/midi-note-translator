@@ -15,6 +15,18 @@ else()
     set(PLATFORM_NAME "linux")
 endif()
 
+# Default to the user's CLAP folder when no install prefix was provided.
+# Passing -DCMAKE_INSTALL_PREFIX (as build.sh and CI do) overrides this.
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    if(APPLE)
+        set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/Library/Audio/Plug-Ins/CLAP" CACHE PATH "CLAP plugin install directory" FORCE)
+    elseif(WIN32)
+        set(CMAKE_INSTALL_PREFIX "$ENV{LOCALAPPDATA}/Programs/CLAP" CACHE PATH "CLAP plugin install directory" FORCE)
+    else()
+        set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.clap" CACHE PATH "CLAP plugin install directory" FORCE)
+    endif()
+endif()
+
 # Create the plugin library
 add_library(MidiNoteTranslator MODULE)
 
@@ -62,9 +74,6 @@ if(APPLE)
         -Wall -Wextra -Wpedantic
     )
     
-    # Set install path for macOS
-    set(CLAP_INSTALL_DIR "$ENV{HOME}/Library/Audio/Plug-Ins/CLAP" CACHE PATH "CLAP plugin install directory")
-    
 elseif(UNIX AND NOT APPLE)
     # Linux settings
     set_target_properties(MidiNoteTranslator PROPERTIES
@@ -81,9 +90,6 @@ elseif(UNIX AND NOT APPLE)
         -Wl,--no-undefined
     )
     
-    # Set install path for Linux
-    set(CLAP_INSTALL_DIR "$ENV{HOME}/.clap" CACHE PATH "CLAP plugin install directory")
-    
 elseif(WIN32)
     # Windows settings
     set_target_properties(MidiNoteTranslator PROPERTIES
@@ -95,9 +101,6 @@ elseif(WIN32)
     target_compile_options(MidiNoteTranslator PRIVATE
         /W4 /permissive-
     )
-    
-    # Set install path for Windows
-    set(CLAP_INSTALL_DIR "$ENV{LOCALAPPDATA}/Programs/CLAP" CACHE PATH "CLAP plugin install directory")
 endif()
 
 # Unit tests
@@ -122,12 +125,12 @@ endif()
 
 # Installation
 install(TARGETS MidiNoteTranslator
-    LIBRARY DESTINATION "${CLAP_INSTALL_DIR}"
-    RUNTIME DESTINATION "${CLAP_INSTALL_DIR}"
-    BUNDLE DESTINATION "${CLAP_INSTALL_DIR}"
+    LIBRARY DESTINATION .
+    RUNTIME DESTINATION .
+    BUNDLE DESTINATION .
 )
 
 # Print configuration message
 message(STATUS "MIDI Note Translator - CLAP Plugin")
 message(STATUS "  Platform: ${PLATFORM_NAME}")
-message(STATUS "  Install: ${CLAP_INSTALL_DIR}")
+message(STATUS "  Install: ${CMAKE_INSTALL_PREFIX}")

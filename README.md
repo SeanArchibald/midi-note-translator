@@ -41,7 +41,7 @@ With Input=12, Output=24, Base=60, Nudge=0:
 
 ## Download Pre-built Releases
 
-Pre-built binaries for Linux, macOS, and Windows are available on the [Releases](https://github.com/SeanArchibald/scale-scaler-clap/releases) page.
+Pre-built binaries for Linux, macOS, and Windows are available on the [Releases](https://github.com/SeanArchibald/midi-note-translator/releases) page.
 
 ### Automated Builds
 
@@ -59,7 +59,7 @@ This project uses GitHub Actions to automatically build and release binaries for
 This project uses Git submodules for the CLAP SDK. Clone with:
 
 ```bash
-git clone --recursive https://github.com/SeanArchibald/scale-scaler-clap.git
+git clone --recursive https://github.com/SeanArchibald/midi-note-translator.git
 ```
 
 Or if already cloned:
@@ -101,13 +101,13 @@ cd build && ctest --output-on-failure
 
 ## Installation
 
-After building, the plugin is automatically installed to the platform-specific location:
+`cmake --install build` installs to the user CLAP folder:
 
 - **macOS**: `~/Library/Audio/Plug-Ins/CLAP/`
 - **Linux**: `~/.clap/`
 - **Windows**: `%LOCALAPPDATA%\Programs\CLAP\`
 
-Or copy the `MidiNoteTranslator.clap` bundle/directory from the `install` folder to your DAW's CLAP plugin folder.
+Passing `-DCMAKE_INSTALL_PREFIX=...` overrides that location. `build.sh` and `build.bat` do this, so they install to the repository's `install/` folder instead; copy `MidiNoteTranslator.clap` from there to your DAW's CLAP folder.
 
 ## Usage
 
@@ -145,4 +145,4 @@ This will automatically trigger the GitHub Actions workflow to build all platfor
 4. Enter a version tag (e.g., `v1.0.0`)
 5. Click **Run workflow**
 
-The release will appear on the [Releases](https://github.com/SeanArchibald/scale-scaler-clap/releases) page with all platform binaries attached.
+The release will appear on the [Releases](https://github.com/SeanArchibald/midi-note-translator/releases) page with all platform binaries attached.
