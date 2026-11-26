@@ -33,3 +33,4 @@ Makefile
 *.exe
 *.out
 *.app
+*.vst3
