@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 
@@ -33,11 +33,6 @@ jobs:
         run: |
           diff -u clap-sdk/LICENSE LICENSES/CLAP-SDK.txt
           diff -u clap-helpers/LICENSE LICENSES/CLAP-HELPERS.txt
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake build-essential
 
       - name: Configure CMake
         run: |
@@ -78,7 +73,7 @@ jobs:
           ls -la artifacts/
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ env.PLUGIN_NAME }}-linux
           path: artifacts
@@ -89,13 +84,9 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
-
-      - name: Install dependencies
-        run: |
-          brew install cmake || true
 
       - name: Configure CMake
         run: |
@@ -121,7 +112,7 @@ jobs:
           ls -la artifacts/
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ env.PLUGIN_NAME }}-macos
           path: artifacts
@@ -132,16 +123,13 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 
-      - name: Setup MSVC
-        uses: ilammy/msvc-dev-cmd@v1
-
       - name: Configure CMake
         run: |
-          cmake -B build -G "NMake Makefiles" `
+          cmake -B build `
             -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_INSTALL_PREFIX=install
 
@@ -164,7 +152,7 @@ jobs:
           Get-ChildItem -Path "artifacts" -Recurse
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ env.PLUGIN_NAME }}-windows
           path: artifacts
@@ -182,11 +170,8 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: artifacts
           pattern: ${{ env.PLUGIN_NAME }}-*
@@ -228,7 +213,7 @@ jobs:
           echo "Version: $VERSION"
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           name: Release ${{ steps.get_version.outputs.version }}
           tag_name: ${{ steps.get_version.outputs.version }}
