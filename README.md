@@ -1,6 +1,6 @@
 # MIDI Note Translator
 
-A CLAP plugin that translates MIDI note numbers between different sized tuning systems.
+A CLAP and VST3 plugin that translates MIDI note numbers between different sized tuning systems.
 
 ## Purpose
 
@@ -47,12 +47,13 @@ Download releases from the [Releases](https://github.com/SeanArchibald/midi-note
 
 ### Prerequisites
 
-- CMake 3.16 or higher
+- CMake 3.21 or higher
 - C++17 compatible compiler
+- Network access on the first configure (the VST3 SDK is downloaded), unless `-DVST3_SDK_ROOT=...` is provided
 
 ### Clone with Submodules
 
-This project uses Git submodules for the CLAP SDK. Clone with:
+This project uses Git submodules for the CLAP SDK, clap-helpers, and clap-wrapper. Clone with:
 
 ```bash
 git clone --recursive https://github.com/SeanArchibald/midi-note-translator.git
@@ -72,9 +73,9 @@ cmake --build build --config Release
 cmake --install build --config Release
 ```
 
-On Windows, run this from a "Developer Command Prompt for Visual Studio"; the default generator works.
+The first configure downloads the VST3 SDK (3.8.0) with CPM. Set `-DVST3_SDK_ROOT=/path/to/vst3sdk` to use a local copy instead.
 
-Omit `-DCMAKE_INSTALL_PREFIX=install` to install directly into your user CLAP folder instead of the repository's `install/` directory.
+On Windows, run this from a "Developer Command Prompt for Visual Studio" and add `-G Ninja` to the configure command. Use a single-config generator; the asset paths for the multi-config Visual Studio generator are not currently normalized.
 
 ### Run the Tests
 
@@ -84,18 +85,31 @@ cd build && ctest --output-on-failure
 
 ## Installation
 
-`cmake --install build` installs to the user CLAP folder:
+`cmake --install build` stages both formats in the install prefix (the repository's `install/` folder in the build commands above):
 
-- **macOS**: `~/Library/Audio/Plug-Ins/CLAP/`
-- **Linux**: `~/.clap/`
-- **Windows**: `%LOCALAPPDATA%\Programs\CLAP\`
+```
+install/MidiNoteTranslator.clap
+install/MidiNoteTranslator.vst3
+```
 
-Passing `-DCMAKE_INSTALL_PREFIX=...` overrides that location. With `-DCMAKE_INSTALL_PREFIX=install`, the plugin is staged in the repository's `install/` folder; copy `MidiNoteTranslator.clap` from there to your DAW's CLAP folder.
+On Windows the staged install uses `install/CLAP/` and `install/VST3/` subfolders.
 
-macOS builds are ad-hoc signed but not notarized. If macOS quarantines a downloaded build, remove the attribute:
+Copy each format to your plugin folder:
+
+- **CLAP**
+  - macOS: `~/Library/Audio/Plug-Ins/CLAP/`
+  - Linux: `~/.clap/`
+  - Windows: `C:\Program Files\Common Files\CLAP\`
+- **VST3**
+  - macOS: `~/Library/Audio/Plug-Ins/VST3/`
+  - Linux: `~/.vst3/`
+  - Windows: `C:\Program Files\Common Files\VST3\`
+
+macOS builds are ad-hoc signed but not notarized. If macOS quarantines a downloaded build, remove the attribute from the relevant bundle:
 
 ```bash
 xattr -dr com.apple.quarantine /path/to/MidiNoteTranslator.clap
+xattr -dr com.apple.quarantine /path/to/MidiNoteTranslator.vst3
 ```
 
 ## Usage
@@ -106,9 +120,13 @@ xattr -dr com.apple.quarantine /path/to/MidiNoteTranslator.clap
 4. Adjust Nudge if needed for fine tuning
 5. Play your MIDI sequence - notes will be translated automatically
 
+### VST3 note routing
+
+Hosts without a third-party MIDI-effect slot (for example Ableton Live, FL Studio, and Studio One) expose the VST3 wrapper as an instrument. Load it on a MIDI track and route that track's MIDI output to the instrument track you want to drive.
+
 ## Technical Details
 
-- **Format**: CLAP (CLever Audio Plugin)
+- **Formats**: CLAP, VST3
 - **Type**: Note Effect
 - **MIDI Support**: Note On, Note Off, note expression, choke, and end events; other events pass through
 - **Platforms**: macOS (universal), Linux, Windows
@@ -125,8 +143,8 @@ To create a new release with pre-built binaries:
 ### Option 1: Push a Git Tag
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.2.0
+git push origin v0.2.0
 ```
 
 This will automatically trigger the GitHub Actions workflow to build all platforms and create a release.
@@ -136,7 +154,7 @@ This will automatically trigger the GitHub Actions workflow to build all platfor
 1. Go to the **Actions** tab in the GitHub repository
 2. Select the **Build and Release** workflow
 3. Click **Run workflow**
-4. Enter a version tag (e.g., `v0.1.0`)
+4. Enter a version tag (e.g., `v0.2.0`)
 5. Click **Run workflow**
 
 The release will appear on the [Releases](https://github.com/SeanArchibald/midi-note-translator/releases) page with all platform binaries attached.
