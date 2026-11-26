@@ -311,6 +311,7 @@ clap_process_status Plugin::process(const clap_process* process) noexcept {
 
                 clap_event_note event{};
                 std::memcpy(&event, header, sizeof(event));
+                event.header.size = static_cast<uint32_t>(sizeof(event));
 
                 // Note-on addresses are required to be concrete.
                 if (event.key < 0 || event.channel < 0 || event.port_index < 0) {
@@ -331,6 +332,7 @@ clap_process_status Plugin::process(const clap_process* process) noexcept {
 
                 clap_event_note event{};
                 std::memcpy(&event, header, sizeof(event));
+                event.header.size = static_cast<uint32_t>(sizeof(event));
 
                 // Keep wildcard note-offs wildcard: all downstream voices came
                 // from this plugin, so the same wildcard is still correct.
@@ -348,6 +350,7 @@ clap_process_status Plugin::process(const clap_process* process) noexcept {
 
                 clap_event_note event{};
                 std::memcpy(&event, header, sizeof(event));
+                event.header.size = static_cast<uint32_t>(sizeof(event));
                 if (event.key >= 0)
                     event.key = m_core.lookupOutputKey(event.note_id, event.port_index,
                                                        event.channel, event.key);
@@ -362,6 +365,7 @@ clap_process_status Plugin::process(const clap_process* process) noexcept {
 
                 clap_event_note_expression event{};
                 std::memcpy(&event, header, sizeof(event));
+                event.header.size = static_cast<uint32_t>(sizeof(event));
                 if (event.key >= 0)
                     event.key = m_core.lookupOutputKey(event.note_id, event.port_index,
                                                        event.channel, event.key);
@@ -376,6 +380,7 @@ clap_process_status Plugin::process(const clap_process* process) noexcept {
 
                 clap_event_midi event{};
                 std::memcpy(&event, header, sizeof(event));
+                event.header.size = static_cast<uint32_t>(sizeof(event));
                 processMidiEvent(event);
                 out->try_push(out, &event.header);
                 break;
