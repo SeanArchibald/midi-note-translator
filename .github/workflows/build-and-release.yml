@@ -70,6 +70,7 @@ jobs:
           cp -r install/${PLUGIN_NAME}.clap artifacts/
           cp LICENSE.md THIRD_PARTY_NOTICES.md artifacts/
           cp -r LICENSES artifacts/
+          chmod +x artifacts/${PLUGIN_NAME}.clap
           ls -la artifacts/
 
       - name: Upload artifact
@@ -92,7 +93,9 @@ jobs:
         run: |
           cmake -B build \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX=install
+            -DCMAKE_INSTALL_PREFIX=install \
+            -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0
 
       - name: Build
         run: cmake --build build --config Release -j$(sysctl -n hw.ncpu)
@@ -103,12 +106,20 @@ jobs:
       - name: Install
         run: cmake --install build --config Release
 
+      - name: Sign and verify the universal bundle
+        run: |
+          codesign --force --sign - "install/${PLUGIN_NAME}.clap"
+          codesign --verify --strict --verbose=2 "install/${PLUGIN_NAME}.clap"
+          lipo "install/${PLUGIN_NAME}.clap/Contents/MacOS/${PLUGIN_NAME}" -verify_arch arm64 x86_64
+          lipo "install/${PLUGIN_NAME}.clap/Contents/MacOS/${PLUGIN_NAME}" -info
+
       - name: Prepare artifact
         run: |
           mkdir -p artifacts
           cp -r install/${PLUGIN_NAME}.clap artifacts/
           cp LICENSE.md THIRD_PARTY_NOTICES.md artifacts/
           cp -r LICENSES artifacts/
+          chmod +x artifacts/${PLUGIN_NAME}.clap/Contents/MacOS/${PLUGIN_NAME}
           ls -la artifacts/
 
       - name: Upload artifact
@@ -185,13 +196,15 @@ jobs:
           mkdir -p releases
 
           # Linux
+          chmod +x artifacts/${PLUGIN_NAME}-linux/${PLUGIN_NAME}.clap
           cd artifacts/${PLUGIN_NAME}-linux
           zip -r ../../releases/${PLUGIN_NAME}-linux-x64.zip *
           cd ../..
 
           # macOS
+          chmod +x artifacts/${PLUGIN_NAME}-macos/${PLUGIN_NAME}.clap/Contents/MacOS/${PLUGIN_NAME}
           cd artifacts/${PLUGIN_NAME}-macos
-          zip -r ../../releases/${PLUGIN_NAME}-macos-arm64.zip *
+          zip -r ../../releases/${PLUGIN_NAME}-macos-universal.zip *
           cd ../..
 
           # Windows

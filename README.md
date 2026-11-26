@@ -41,7 +41,7 @@ With Input=12, Output=24, Base=60, Nudge=0:
 
 ## Releases
 
-There are no releases yet. CI builds, tests, and validates every push; pushing a `v*` tag creates a release with binaries for macOS, Linux, and Windows. See [`.github/README.md`](.github/README.md) for details.
+There are no releases yet. CI builds, tests, and validates every push; pushing a `v*` tag creates a release with binaries for macOS, Linux, and Windows. See [`.github/CI.md`](.github/CI.md) for details.
 
 ## Building from Source
 
@@ -92,6 +92,12 @@ cd build && ctest --output-on-failure
 
 Passing `-DCMAKE_INSTALL_PREFIX=...` overrides that location. With `-DCMAKE_INSTALL_PREFIX=install`, the plugin is staged in the repository's `install/` folder; copy `MidiNoteTranslator.clap` from there to your DAW's CLAP folder.
 
+macOS builds are ad-hoc signed but not notarized. If macOS quarantines a downloaded build, remove the attribute:
+
+```bash
+xattr -dr com.apple.quarantine /path/to/MidiNoteTranslator.clap
+```
+
 ## Usage
 
 1. Insert MIDI Note Translator before your synthesizer in the plugin chain
@@ -105,7 +111,7 @@ Passing `-DCMAKE_INSTALL_PREFIX=...` overrides that location. With `-DCMAKE_INST
 - **Format**: CLAP (CLever Audio Plugin)
 - **Type**: Note Effect
 - **MIDI Support**: Note On, Note Off, note expression, choke, and end events; other events pass through
-- **Platforms**: macOS, Linux, Windows
+- **Platforms**: macOS (universal), Linux, Windows
 
 ## License
 

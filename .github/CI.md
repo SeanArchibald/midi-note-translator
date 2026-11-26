@@ -20,7 +20,7 @@ The workflow runs on:
 
 1. **Build Jobs** (run in parallel):
    - `build-linux`: Builds on Ubuntu 22.04 (x64)
-   - `build-macos`: Builds on macOS (arm64)
+   - `build-macos`: Builds a universal macOS binary (arm64 + x86_64)
    - `build-windows`: Builds on Windows (x64)
 
    Each build job runs the unit tests and stages `LICENSE.md`,
@@ -37,10 +37,8 @@ The workflow runs on:
 
 Each release produces:
 - `MidiNoteTranslator-linux-x64.zip` - Linux CLAP plugin + license notices
-- `MidiNoteTranslator-macos-arm64.zip` - macOS CLAP plugin bundle + license notices
+- `MidiNoteTranslator-macos-universal.zip` - Universal macOS CLAP bundle + license notices
 - `MidiNoteTranslator-windows-x64.zip` - Windows CLAP plugin + license notices
-
-A universal macOS build is planned; the CI artifact is currently arm64 only.
 
 ## Creating a Release
 
