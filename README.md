@@ -39,13 +39,9 @@ With Input=12, Output=24, Base=60, Nudge=0:
 - An input note of 60 outputs 60
 - An input note of 72 (12 semitones up) outputs 84 (24 quarter-tones up)
 
-## Download Pre-built Releases
+## Releases
 
-Pre-built binaries for Linux, macOS, and Windows are available on the [Releases](https://github.com/SeanArchibald/midi-note-translator/releases) page.
-
-### Automated Builds
-
-This project uses GitHub Actions to automatically build and release binaries for all platforms. See [`.github/README.md`](.github/README.md) for details.
+There are no releases yet. CI builds, tests, and validates every push; pushing a `v*` tag creates a release with binaries for macOS, Linux, and Windows. See [`.github/README.md`](.github/README.md) for details.
 
 ## Building from Source
 
@@ -68,34 +64,21 @@ Or if already cloned:
 git submodule update --init --recursive
 ```
 
-### macOS / Linux
+### Build
 
 ```bash
-./build.sh
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install
+cmake --build build --config Release
+cmake --install build --config Release
 ```
 
-### Windows
+On Windows, run this from a "Developer Command Prompt for Visual Studio"; the default generator works.
 
-Open a "Developer Command Prompt for Visual Studio" and run:
+Omit `-DCMAKE_INSTALL_PREFIX=install` to install directly into your user CLAP folder instead of the repository's `install/` directory.
 
-```batch
-build.bat
-```
-
-### Manual CMake Build
+### Run the Tests
 
 ```bash
-mkdir build
-cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-cmake --build .
-```
-
-### Running the Tests
-
-```bash
-cmake -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build
 cd build && ctest --output-on-failure
 ```
 
@@ -107,7 +90,7 @@ cd build && ctest --output-on-failure
 - **Linux**: `~/.clap/`
 - **Windows**: `%LOCALAPPDATA%\Programs\CLAP\`
 
-Passing `-DCMAKE_INSTALL_PREFIX=...` overrides that location. `build.sh` and `build.bat` do this, so they install to the repository's `install/` folder instead; copy `MidiNoteTranslator.clap` from there to your DAW's CLAP folder.
+Passing `-DCMAKE_INSTALL_PREFIX=...` overrides that location. With `-DCMAKE_INSTALL_PREFIX=install`, the plugin is staged in the repository's `install/` folder; copy `MidiNoteTranslator.clap` from there to your DAW's CLAP folder.
 
 ## Usage
 
@@ -121,8 +104,13 @@ Passing `-DCMAKE_INSTALL_PREFIX=...` overrides that location. `build.sh` and `bu
 
 - **Format**: CLAP (CLever Audio Plugin)
 - **Type**: Note Effect
-- **MIDI Support**: Note On, Note Off, and pass-through for all other events
+- **MIDI Support**: Note On, Note Off, note expression, choke, and end events; other events pass through
 - **Platforms**: macOS, Linux, Windows
+
+## License
+
+MIDI Note Translator is released under the MIT License. See [LICENSE.md](LICENSE.md).
+Third-party components are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## Creating a Release
 
