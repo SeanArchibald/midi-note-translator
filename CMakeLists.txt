@@ -23,6 +23,8 @@ target_sources(MidiNoteTranslator PRIVATE
     src/entry.cpp
     src/plugin.cpp
     src/plugin.h
+    src/core.cpp
+    src/core.h
 )
 
 # Include directories

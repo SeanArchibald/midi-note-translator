@@ -1,13 +1,14 @@
 #pragma once
 
+#include "core.h"
+
 #include <clap/clap.h>
 #include <clap/helpers/plugin.hh>
 #include <clap/helpers/plugin.hxx>
 #include <clap/helpers/host-proxy.hh>
 #include <clap/helpers/host-proxy.hxx>
-#include <array>
-#include <cmath>
-#include <unordered_map>
+
+#include <cstdint>
 
 namespace midi_note_translator {
 
@@ -19,34 +20,9 @@ enum class ParamId : uint32_t {
     Count = 4
 };
 
-// Key for tracking active notes (input note + channel + port)
-struct ActiveNoteKey {
-    int16_t key;
-    int16_t channel;
-    int16_t port_index;
-    
-    bool operator==(const ActiveNoteKey& other) const noexcept {
-        return key == other.key && channel == other.channel && port_index == other.port_index;
-    }
-};
-
-struct ActiveNoteKeyHash {
-    size_t operator()(const ActiveNoteKey& k) const noexcept {
-        return std::hash<int16_t>()(k.key) ^ (std::hash<int16_t>()(k.channel) << 1) ^ (std::hash<int16_t>()(k.port_index) << 2);
-    }
-};
-
-// Information about an active note
-struct ActiveNoteInfo {
-    int16_t outputKey;
-    int16_t channel;
-    int16_t port_index;
-    double velocity;  // Store original velocity for potential note-off
-};
-
 class Plugin : public clap::helpers::Plugin<clap::helpers::MisbehaviourHandler::Terminate, clap::helpers::CheckingLevel::Maximal> {
 public:
-    Plugin(const clap_host* host);
+    explicit Plugin(const clap_host* host);
 
     // clap_plugin_descriptor
     static const clap_plugin_descriptor* descriptor();
@@ -80,23 +56,11 @@ public:
     bool stateLoad(const clap_istream* stream) noexcept override;
 
 protected:
-    void handleEvent(const clap_event_header* header, clap_output_events* out = nullptr);
-    void processNoteOn(clap_event_note* event, clap_output_events* out);
-    void processNoteOff(clap_event_note* event, clap_output_events* out);
-    void processMidiEvent(clap_event_midi* event, clap_output_events* out);
-    int32_t scaleNote(int32_t inputNote);
-    void releaseAllActiveNotes(clap_output_events* out, uint32_t time);
-    void sendNoteOff(clap_output_events* out, uint32_t time, const ActiveNoteKey& key, const ActiveNoteInfo& info);
+    void handleParamEvent(const clap_event_param_value* event) noexcept;
+    void processMidiEvent(clap_event_midi& event) noexcept;
 
 private:
-    // Parameter values
-    int32_t m_inputNoteCount = 12;
-    int32_t m_outputNoteCount = 12;
-    int32_t m_baseMidiNote = 60;
-    double m_nudge = 0.0;
-    
-    // Track active notes to handle stuck notes when parameters change
-    std::unordered_map<ActiveNoteKey, ActiveNoteInfo, ActiveNoteKeyHash> m_activeNotes;
+    NoteCore m_core;
 };
 
 } // namespace midi_note_translator
