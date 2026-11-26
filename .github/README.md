@@ -11,7 +11,7 @@ This workflow handles both CI (continuous integration) and CD (continuous deploy
 #### Triggers
 
 The workflow runs on:
-- **Push to main/master branch** - Builds all platforms
+- **Push to master branch** - Builds all platforms
 - **Pull requests** - Builds all platforms (for testing)
 - **Tags starting with 'v'** - Builds and creates a release (e.g., `v1.0.0`)
 - **Manual trigger** - Can be run manually with a custom version tag
@@ -19,12 +19,14 @@ The workflow runs on:
 #### Jobs
 
 1. **Build Jobs** (run in parallel):
-   - `build-linux`: Builds on Ubuntu (x64)
-   - `build-macos`: Builds on macOS (Universal binary)
+   - `build-linux`: Builds on Ubuntu 22.04 (x64)
+   - `build-macos`: Builds on macOS (arm64)
    - `build-windows`: Builds on Windows (x64)
 
-   Each build job runs the unit tests. The Linux job additionally validates the
-   built plugin with `clap-validator`.
+   Each build job runs the unit tests and stages `LICENSE.md`,
+   `THIRD_PARTY_NOTICES.md`, and `LICENSES/` alongside the plugin. The Linux job
+   additionally validates the built plugin with `clap-validator` and checks that
+   the bundled license texts match the submodules.
 
 2. **Release Job**:
    - Downloads all built artifacts
@@ -33,10 +35,12 @@ The workflow runs on:
 
 #### Artifacts
 
-Each build produces:
-- `MidiNoteTranslator-linux-x64.zip` - Linux CLAP plugin
-- `MidiNoteTranslator-macos-universal.zip` - macOS CLAP plugin bundle
-- `MidiNoteTranslator-windows-x64.zip` - Windows CLAP plugin
+Each release produces:
+- `MidiNoteTranslator-linux-x64.zip` - Linux CLAP plugin + license notices
+- `MidiNoteTranslator-macos-arm64.zip` - macOS CLAP plugin bundle + license notices
+- `MidiNoteTranslator-windows-x64.zip` - Windows CLAP plugin + license notices
+
+A universal macOS build is planned; the CI artifact is currently arm64 only.
 
 ## Creating a Release
 

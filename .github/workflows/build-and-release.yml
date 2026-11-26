@@ -22,12 +22,17 @@ jobs:
   # ============================================================================
   build-linux:
     name: Build (Linux)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Check bundled license texts
+        run: |
+          diff -u clap-sdk/LICENSE LICENSES/CLAP-SDK.txt
+          diff -u clap-helpers/LICENSE LICENSES/CLAP-HELPERS.txt
 
       - name: Install dependencies
         run: |
@@ -52,7 +57,7 @@ jobs:
       - name: Validate CLAP plugin
         run: |
           set -euo pipefail
-          url=$(curl -fsSL https://api.github.com/repos/free-audio/clap-validator/releases/latest \
+          url=$(curl -fsSL https://api.github.com/repos/free-audio/clap-validator/releases/tags/0.4.1 \
             | jq -r '.assets[] | select(.name | test("ubuntu")) | .browser_download_url' \
             | head -n1)
           curl -fsSL -o clap-validator.zip "$url"
@@ -68,13 +73,15 @@ jobs:
         run: |
           mkdir -p artifacts
           cp -r install/${PLUGIN_NAME}.clap artifacts/
+          cp LICENSE.md THIRD_PARTY_NOTICES.md artifacts/
+          cp -r LICENSES artifacts/
           ls -la artifacts/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PLUGIN_NAME }}-linux
-          path: artifacts/${{ env.PLUGIN_NAME }}.clap
+          path: artifacts
           retention-days: 7
 
   build-macos:
@@ -109,13 +116,15 @@ jobs:
         run: |
           mkdir -p artifacts
           cp -r install/${PLUGIN_NAME}.clap artifacts/
+          cp LICENSE.md THIRD_PARTY_NOTICES.md artifacts/
+          cp -r LICENSES artifacts/
           ls -la artifacts/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PLUGIN_NAME }}-macos
-          path: artifacts/${{ env.PLUGIN_NAME }}.clap
+          path: artifacts
           retention-days: 7
 
   build-windows:
@@ -150,13 +159,15 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path artifacts
           Copy-Item -Path "install\${env:PLUGIN_NAME}.clap" -Destination "artifacts\" -Recurse
+          Copy-Item -Path LICENSE.md, THIRD_PARTY_NOTICES.md -Destination "artifacts\"
+          Copy-Item -Path LICENSES -Destination "artifacts\" -Recurse
           Get-ChildItem -Path "artifacts" -Recurse
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PLUGIN_NAME }}-windows
-          path: artifacts/${{ env.PLUGIN_NAME }}.clap
+          path: artifacts
           retention-days: 7
 
   # ============================================================================
@@ -190,17 +201,17 @@ jobs:
 
           # Linux
           cd artifacts/${PLUGIN_NAME}-linux
-          zip -r ../../releases/${PLUGIN_NAME}-linux-x64.zip ${PLUGIN_NAME}.clap
+          zip -r ../../releases/${PLUGIN_NAME}-linux-x64.zip *
           cd ../..
 
           # macOS
           cd artifacts/${PLUGIN_NAME}-macos
-          zip -r ../../releases/${PLUGIN_NAME}-macos-universal.zip ${PLUGIN_NAME}.clap
+          zip -r ../../releases/${PLUGIN_NAME}-macos-arm64.zip *
           cd ../..
 
           # Windows
           cd artifacts/${PLUGIN_NAME}-windows
-          zip -r ../../releases/${PLUGIN_NAME}-windows-x64.zip ${PLUGIN_NAME}.clap
+          zip -r ../../releases/${PLUGIN_NAME}-windows-x64.zip *
           cd ../..
 
           ls -la releases/
