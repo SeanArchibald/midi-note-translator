@@ -13,7 +13,7 @@ This workflow handles both CI (continuous integration) and CD (continuous deploy
 The workflow runs on:
 - **Push to master branch** - Builds all platforms
 - **Pull requests** - Builds all platforms (for testing)
-- **Tags starting with 'v'** - Builds and creates a release (e.g., `v1.0.0`)
+- **Tags starting with 'v'** - Builds and creates a release (e.g., `v0.1.0`)
 - **Manual trigger** - Can be run manually with a custom version tag
 
 #### Jobs
@@ -45,8 +45,8 @@ Each release produces:
 ### Option 1: Push a Git Tag
 
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+git tag v0.1.0
+git push origin v0.1.0
 ```
 
 This will automatically trigger the build and create a release.
@@ -56,7 +56,7 @@ This will automatically trigger the build and create a release.
 1. Go to the **Actions** tab in your GitHub repository
 2. Select the **Build and Release** workflow
 3. Click **Run workflow**
-4. Enter a version tag (e.g., `v1.0.0`)
+4. Enter a version tag (e.g., `v0.1.0`)
 5. Click **Run workflow**
 
 ## Release Notes
@@ -84,5 +84,5 @@ Check the Actions logs for:
 
 Ensure:
 - All three build jobs completed successfully
-- The version tag follows semantic versioning (e.g., `v1.0.0`)
+- The version tag follows semantic versioning (e.g., `v0.1.0`)
 - You have write permissions to the repository

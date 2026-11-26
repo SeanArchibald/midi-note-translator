@@ -41,7 +41,7 @@ With Input=12, Output=24, Base=60, Nudge=0:
 
 ## Releases
 
-There are no releases yet. CI builds, tests, and validates every push; pushing a `v*` tag creates a release with binaries for macOS, Linux, and Windows. See [`.github/CI.md`](.github/CI.md) for details.
+Download releases from the [Releases](https://github.com/SeanArchibald/midi-note-translator/releases) page. CI builds, tests, and validates every push; pushing a `v*` tag creates a release with binaries for macOS, Linux, and Windows. See [`.github/CI.md`](.github/CI.md) for details.
 
 ## Building from Source
 
@@ -125,8 +125,8 @@ To create a new release with pre-built binaries:
 ### Option 1: Push a Git Tag
 
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+git tag v0.1.0
+git push origin v0.1.0
 ```
 
 This will automatically trigger the GitHub Actions workflow to build all platforms and create a release.
@@ -136,7 +136,7 @@ This will automatically trigger the GitHub Actions workflow to build all platfor
 1. Go to the **Actions** tab in the GitHub repository
 2. Select the **Build and Release** workflow
 3. Click **Run workflow**
-4. Enter a version tag (e.g., `v1.0.0`)
+4. Enter a version tag (e.g., `v0.1.0`)
 5. Click **Run workflow**
 
 The release will appear on the [Releases](https://github.com/SeanArchibald/midi-note-translator/releases) page with all platform binaries attached.

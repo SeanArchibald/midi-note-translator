@@ -1,10 +1,19 @@
 cmake_minimum_required(VERSION 3.16)
-project(MidiNoteTranslator VERSION 1.0.0 LANGUAGES CXX)
+project(MidiNoteTranslator VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(CTest)
+
+# Generate the version header so the plugin descriptor cannot drift from CMake.
+set(MNT_GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
+file(MAKE_DIRECTORY "${MNT_GENERATED_DIR}")
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/mnt_version.h.in"
+    "${MNT_GENERATED_DIR}/mnt_version.h"
+    @ONLY
+)
 
 # Platform detection
 if(WIN32)
@@ -41,6 +50,7 @@ target_sources(MidiNoteTranslator PRIVATE
 
 # Include directories
 target_include_directories(MidiNoteTranslator PRIVATE
+    ${MNT_GENERATED_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/clap-sdk/include
     ${CMAKE_CURRENT_SOURCE_DIR}/clap-helpers/include
 )
@@ -64,8 +74,8 @@ if(APPLE)
         MACOSX_BUNDLE_GUI_IDENTIFIER "com.sevish.midi-note-translator"
         MACOSX_BUNDLE_BUNDLE_NAME "MIDI Note Translator"
         MACOSX_BUNDLE_COPYRIGHT "Copyright (c) 2026 Sevish"
-        MACOSX_BUNDLE_BUNDLE_VERSION "1.0.0"
-        MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0.0"
+        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/clap-sdk/src/plugins.plist.in"
         PREFIX ""
         SUFFIX ""

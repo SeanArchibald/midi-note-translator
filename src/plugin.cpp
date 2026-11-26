@@ -1,5 +1,7 @@
 #include "plugin.h"
 
+#include "mnt_version.h"
+
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -12,7 +14,7 @@ static const char* const PLUGIN_VENDOR = "Sevish";
 static const char* const PLUGIN_URL = "";
 static const char* const PLUGIN_MANUAL_URL = "";
 static const char* const PLUGIN_SUPPORT_URL = "";
-static const char* const PLUGIN_VERSION = "1.0.0";
+static const char* const PLUGIN_VERSION = MNT_VERSION;
 static const char* const PLUGIN_DESCRIPTION = "Translates MIDI note numbers between equal divisions";
 
 // Plugin features - note effect that handles MIDI
