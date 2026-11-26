@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag (e.g., v0.1.0)'
+        description: 'Version tag (e.g., v0.2.0)'
         required: false
         default: ''
 
@@ -33,12 +33,16 @@ jobs:
         run: |
           diff -u clap-sdk/LICENSE LICENSES/CLAP-SDK.txt
           diff -u clap-helpers/LICENSE LICENSES/CLAP-HELPERS.txt
+          diff -u clap-wrapper/LICENSE LICENSES/CLAP-WRAPPER.txt
 
       - name: Configure CMake
         run: |
           cmake -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=install
+
+      - name: Check bundled VST3 license text
+        run: diff -u build/cpm/vst3sdk/LICENSE.txt LICENSES/VST3-SDK.txt
 
       - name: Build
         run: cmake --build build --config Release -j$(nproc)
@@ -67,10 +71,9 @@ jobs:
       - name: Prepare artifact
         run: |
           mkdir -p artifacts
-          cp -r install/${PLUGIN_NAME}.clap artifacts/
-          cp LICENSE.md THIRD_PARTY_NOTICES.md artifacts/
-          cp -r LICENSES artifacts/
+          cp -r install/* artifacts/
           chmod +x artifacts/${PLUGIN_NAME}.clap
+          find artifacts/${PLUGIN_NAME}.vst3 -name '*.so' -exec chmod +x {} +
           ls -la artifacts/
 
       - name: Upload artifact
@@ -106,20 +109,33 @@ jobs:
       - name: Install
         run: cmake --install build --config Release
 
-      - name: Sign and verify the universal bundle
+      - name: Sign and verify the universal bundles
         run: |
           codesign --force --sign - "install/${PLUGIN_NAME}.clap"
+          codesign --force --sign - "install/${PLUGIN_NAME}.vst3"
           codesign --verify --strict --verbose=2 "install/${PLUGIN_NAME}.clap"
+          codesign --verify --strict --verbose=2 "install/${PLUGIN_NAME}.vst3"
           lipo "install/${PLUGIN_NAME}.clap/Contents/MacOS/${PLUGIN_NAME}" -verify_arch arm64 x86_64
+          lipo "install/${PLUGIN_NAME}.vst3/Contents/MacOS/${PLUGIN_NAME}" -verify_arch arm64 x86_64
           lipo "install/${PLUGIN_NAME}.clap/Contents/MacOS/${PLUGIN_NAME}" -info
+          lipo "install/${PLUGIN_NAME}.vst3/Contents/MacOS/${PLUGIN_NAME}" -info
+
+      - name: Validate VST3
+        run: |
+          set -euo pipefail
+          curl -fsSL -o pluginval.zip https://github.com/Tracktion/pluginval/releases/download/v1.0.4/pluginval_macOS.zip
+          mkdir -p pluginval
+          unzip -q pluginval.zip -d pluginval
+          tool=pluginval/pluginval.app/Contents/MacOS/pluginval
+          chmod +x "$tool"
+          "$tool" --validate "install/${PLUGIN_NAME}.vst3" --strictness-level 5 --skip-gui-tests --timeout-ms 60000
 
       - name: Prepare artifact
         run: |
           mkdir -p artifacts
-          cp -r install/${PLUGIN_NAME}.clap artifacts/
-          cp LICENSE.md THIRD_PARTY_NOTICES.md artifacts/
-          cp -r LICENSES artifacts/
+          cp -r install/* artifacts/
           chmod +x artifacts/${PLUGIN_NAME}.clap/Contents/MacOS/${PLUGIN_NAME}
+          chmod +x artifacts/${PLUGIN_NAME}.vst3/Contents/MacOS/${PLUGIN_NAME}
           ls -la artifacts/
 
       - name: Upload artifact
@@ -138,26 +154,30 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+
       - name: Configure CMake
         run: |
-          cmake -B build `
+          cmake -B build -G Ninja `
             -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_INSTALL_PREFIX=install
 
       - name: Build
-        run: cmake --build build --config Release
+        run: cmake --build build
 
       - name: Run unit tests
-        run: ctest --test-dir build --output-on-failure -C Release
+        run: ctest --test-dir build --output-on-failure
 
       - name: Install
-        run: cmake --install build --config Release
+        run: cmake --install build
 
       - name: Prepare artifact
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path artifacts
-          Copy-Item -Path "install\${env:PLUGIN_NAME}.clap" -Destination "artifacts\" -Recurse
+          Copy-Item -Path "install\CLAP\*" -Destination "artifacts\" -Recurse
+          Copy-Item -Path "install\VST3\*" -Destination "artifacts\" -Recurse
           Copy-Item -Path LICENSE.md, THIRD_PARTY_NOTICES.md -Destination "artifacts\"
           Copy-Item -Path LICENSES -Destination "artifacts\" -Recurse
           Get-ChildItem -Path "artifacts" -Recurse
@@ -197,12 +217,14 @@ jobs:
 
           # Linux
           chmod +x artifacts/${PLUGIN_NAME}-linux/${PLUGIN_NAME}.clap
+          find artifacts/${PLUGIN_NAME}-linux/${PLUGIN_NAME}.vst3 -name '*.so' -exec chmod +x {} +
           cd artifacts/${PLUGIN_NAME}-linux
           zip -r ../../releases/${PLUGIN_NAME}-linux-x64.zip *
           cd ../..
 
           # macOS
           chmod +x artifacts/${PLUGIN_NAME}-macos/${PLUGIN_NAME}.clap/Contents/MacOS/${PLUGIN_NAME}
+          chmod +x artifacts/${PLUGIN_NAME}-macos/${PLUGIN_NAME}.vst3/Contents/MacOS/${PLUGIN_NAME}
           cd artifacts/${PLUGIN_NAME}-macos
           zip -r ../../releases/${PLUGIN_NAME}-macos-universal.zip *
           cd ../..
