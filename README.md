@@ -91,6 +91,14 @@ cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build .
 ```
 
+### Running the Tests
+
+```bash
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+cd build && ctest --output-on-failure
+```
+
 ## Installation
 
 After building, the plugin is automatically installed to the platform-specific location:
