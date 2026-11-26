@@ -1,6 +1,6 @@
 # Scale Scaler
 
-A CLAP plugin that scales MIDI note numbers between different equal temperament tuning systems.
+A CLAP plugin that scales MIDI note numbers between different sized tuning systems.
 
 ## Purpose
 
@@ -39,7 +39,15 @@ With Input=12, Output=24, Base=60, Nudge=0:
 - An input note of 60 outputs 60
 - An input note of 72 (12 semitones up) outputs 84 (24 quarter-tones up)
 
-## Building
+## Download Pre-built Releases
+
+Pre-built binaries for Linux, macOS, and Windows are available on the [Releases](https://github.com/SeanArchibald/scale-scaler-clap/releases) page.
+
+### Automated Builds
+
+This project uses GitHub Actions to automatically build and release binaries for all platforms. See [`.github/README.md`](.github/README.md) for details.
+
+## Building from Source
 
 ### Prerequisites
 
@@ -51,7 +59,7 @@ With Input=12, Output=24, Base=60, Nudge=0:
 This project uses Git submodules for the CLAP SDK. Clone with:
 
 ```bash
-git clone --recursive https://github.com/yourusername/scale-scaler-clap.git
+git clone --recursive https://github.com/SeanArchibald/scale-scaler-clap.git
 ```
 
 Or if already cloned:
@@ -104,30 +112,29 @@ Or copy the `.clap` bundle/directory from the `install` folder to your DAW's CLA
 ## Technical Details
 
 - **Format**: CLAP (CLever Audio Plugin)
-- **Type**: Note Effect (no audio processing)
+- **Type**: Note Effect
 - **MIDI Support**: Note On, Note Off, and pass-through for all other events
 - **Platforms**: macOS, Linux, Windows
 
-## License
+## Creating a Release
 
-MIT License
+To create a new release with pre-built binaries:
 
-Copyright (c) 2026
+### Option 1: Push a Git Tag
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This will automatically trigger the GitHub Actions workflow to build all platforms and create a release.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+### Option 2: Manual Trigger
+
+1. Go to the **Actions** tab in the GitHub repository
+2. Select the **Build and Release** workflow
+3. Click **Run workflow**
+4. Enter a version tag (e.g., `v1.0.0`)
+5. Click **Run workflow**
+
+The release will appear on the [Releases](https://github.com/SeanArchibald/scale-scaler-clap/releases) page with all platform binaries attached.
