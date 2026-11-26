@@ -33,10 +33,8 @@ target_include_directories(MidiNoteTranslator PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/clap-helpers/include
 )
 
-# Compile definitions - CLAP_EXPORT for visibility
-target_compile_definitions(MidiNoteTranslator PRIVATE
-    "CLAP_EXPORT=__attribute__((visibility(\"default\")))"
-)
+# CLAP_EXPORT is defined per platform by the CLAP SDK (clap/private/macros.h);
+# overriding it with a GNU attribute breaks the MSVC build.
 
 if(WIN32)
     target_compile_definitions(MidiNoteTranslator PRIVATE
