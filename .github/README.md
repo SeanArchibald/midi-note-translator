@@ -23,6 +23,9 @@ The workflow runs on:
    - `build-macos`: Builds on macOS (Universal binary)
    - `build-windows`: Builds on Windows (x64)
 
+   Each build job runs the unit tests. The Linux job additionally validates the
+   built plugin with `clap-validator`.
+
 2. **Release Job**:
    - Downloads all built artifacts
    - Packages them as ZIP files

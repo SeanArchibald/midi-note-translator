@@ -43,8 +43,26 @@ jobs:
       - name: Build
         run: cmake --build build --config Release -j$(nproc)
 
+      - name: Run unit tests
+        run: ctest --test-dir build --output-on-failure -C Release
+
       - name: Install
         run: cmake --install build --config Release
+
+      - name: Validate CLAP plugin
+        run: |
+          set -euo pipefail
+          url=$(curl -fsSL https://api.github.com/repos/free-audio/clap-validator/releases/latest \
+            | jq -r '.assets[] | select(.name | test("ubuntu")) | .browser_download_url' \
+            | head -n1)
+          curl -fsSL -o clap-validator.zip "$url"
+          mkdir -p clap-validator
+          unzip -q clap-validator.zip -d clap-validator
+          tarball=$(find clap-validator -name '*.tar.gz' | head -n1)
+          if [ -n "$tarball" ]; then tar -xzf "$tarball" -C clap-validator; fi
+          validator=$(find clap-validator -type f -name clap-validator | head -n1)
+          chmod +x "$validator"
+          "$validator" validate "install/${PLUGIN_NAME}.clap" --only-failed
 
       - name: Prepare artifact
         run: |
@@ -80,6 +98,9 @@ jobs:
 
       - name: Build
         run: cmake --build build --config Release -j$(sysctl -n hw.ncpu)
+
+      - name: Run unit tests
+        run: ctest --test-dir build --output-on-failure -C Release
 
       - name: Install
         run: cmake --install build --config Release
@@ -117,6 +138,9 @@ jobs:
 
       - name: Build
         run: cmake --build build --config Release
+
+      - name: Run unit tests
+        run: ctest --test-dir build --output-on-failure -C Release
 
       - name: Install
         run: cmake --install build --config Release
