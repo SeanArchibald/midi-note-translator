@@ -63,6 +63,7 @@ if(APPLE)
         BUNDLE_EXTENSION "clap"
         MACOSX_BUNDLE_GUI_IDENTIFIER "com.sevish.midi-note-translator"
         MACOSX_BUNDLE_BUNDLE_NAME "MIDI Note Translator"
+        MACOSX_BUNDLE_COPYRIGHT "Copyright (c) 2026 Sevish"
         MACOSX_BUNDLE_BUNDLE_VERSION "1.0.0"
         MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0.0"
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/clap-sdk/src/plugins.plist.in"
