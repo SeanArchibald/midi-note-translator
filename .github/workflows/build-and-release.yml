@@ -231,7 +231,7 @@ jobs:
           name: Release ${{ steps.get_version.outputs.version }}
           tag_name: ${{ steps.get_version.outputs.version }}
           files: releases/*
-          generate_release_notes: true
+          generate_release_notes: false
           draft: false
           prerelease: ${{ contains(steps.get_version.outputs.version, 'alpha') || contains(steps.get_version.outputs.version, 'beta') || contains(steps.get_version.outputs.version, 'rc') }}
         env:
