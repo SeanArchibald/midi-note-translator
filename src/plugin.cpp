@@ -245,6 +245,25 @@ bool Plugin::notePortsInfo(uint32_t index, bool isInput, clap_note_port_info* in
     return true;
 }
 
+#ifdef MNT_VST3_SILENT_OUTPUT
+uint32_t Plugin::audioPortsCount(bool isInput) const noexcept {
+    return isInput ? 0 : 1;
+}
+
+bool Plugin::audioPortsInfo(uint32_t index, bool isInput, clap_audio_port_info* info) const noexcept {
+    if (isInput || index != 0)
+        return false;
+
+    info->id = 0;
+    info->flags = CLAP_AUDIO_PORT_IS_MAIN;
+    info->channel_count = 2;
+    info->port_type = CLAP_PORT_STEREO;
+    info->in_place_pair = CLAP_INVALID_ID;
+    strncpy(info->name, "Output", sizeof(info->name));
+    return true;
+}
+#endif
+
 void Plugin::handleParamEvent(const clap_event_param_value* event) noexcept {
     switch (static_cast<ParamId>(event->param_id)) {
         case ParamId::InputNoteCount:
@@ -283,6 +302,19 @@ void Plugin::processMidiEvent(clap_event_midi& event) noexcept {
 clap_process_status Plugin::process(const clap_process* process) noexcept {
     if (process->in_events == nullptr || process->out_events == nullptr)
         return CLAP_PROCESS_CONTINUE;
+
+#ifdef MNT_VST3_SILENT_OUTPUT
+    // The VST3 build exposes a stereo output but only transforms notes.
+    for (uint32_t port = 0; port < process->audio_outputs_count; ++port) {
+        const clap_audio_buffer& buffer = process->audio_outputs[port];
+        if (buffer.data32 == nullptr)
+            continue;
+        for (uint32_t channel = 0; channel < buffer.channel_count; ++channel) {
+            if (buffer.data32[channel] != nullptr)
+                std::memset(buffer.data32[channel], 0, sizeof(float) * process->frames_count);
+        }
+    }
+#endif
 
     const clap_output_events* out = process->out_events;
     const uint32_t eventCount = process->in_events->size(process->in_events);

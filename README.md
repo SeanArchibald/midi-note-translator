@@ -120,10 +120,6 @@ xattr -dr com.apple.quarantine /path/to/MidiNoteTranslator.vst3
 4. Adjust Nudge if needed for fine tuning
 5. Play your MIDI sequence - notes will be translated automatically
 
-### VST3 note routing
-
-Hosts without a third-party MIDI-effect slot (for example Ableton Live, FL Studio, and Studio One) expose the VST3 wrapper as an instrument. Load it on a MIDI track and route that track's MIDI output to the instrument track you want to drive.
-
 ## Technical Details
 
 - **Formats**: CLAP, VST3

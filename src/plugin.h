@@ -50,6 +50,14 @@ public:
     uint32_t notePortsCount(bool isInput) const noexcept override;
     bool notePortsInfo(uint32_t index, bool isInput, clap_note_port_info* info) const noexcept override;
 
+#ifdef MNT_VST3_SILENT_OUTPUT
+    // clap_plugin_audio_ports: the VST3 build presents a silent stereo output
+    // so hosts load it as a normal instrument.
+    bool implementsAudioPorts() const noexcept override { return true; }
+    uint32_t audioPortsCount(bool isInput) const noexcept override;
+    bool audioPortsInfo(uint32_t index, bool isInput, clap_audio_port_info* info) const noexcept override;
+#endif
+
     // clap_plugin_state
     bool implementsState() const noexcept override { return true; }
     bool stateSave(const clap_ostream* stream) noexcept override;
